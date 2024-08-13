@@ -1,9 +1,16 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
+const isError = (res: Response) => {
+	if (!res.ok) {
+		throw new Error(res.statusText)
+	}
+}
+
 export const api = {
 	list: async () => {
 		const res = await fetch(`${API_URL}/`)
 		const json = await res.json()
+		isError(res)
 		return json.data as {
 			id: number
 			name: string
@@ -18,6 +25,7 @@ export const api = {
 				fingerprint: imgBase64.replace(/^data:image\/\w+;base64,/, ""),
 			}),
 		})
+		isError(res)
 		const json = await res.json()
 		return json.data as {
 			id: number
@@ -38,6 +46,7 @@ export const api = {
 				fingerprint: imgBase64.replace(/^data:image\/\w+;base64,/, ""),
 			}),
 		})
+		isError(res)
 		const json = await res.json()
 		return json.data as string
 	},
@@ -49,6 +58,7 @@ export const api = {
 				name,
 			}),
 		})
+		isError(res)
 		const json = await res.json()
 		return json.data as string
 	},

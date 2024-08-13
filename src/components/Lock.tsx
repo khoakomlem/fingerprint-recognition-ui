@@ -17,7 +17,7 @@ export function Lock({ name }: { name: string }) {
 			onClick={() => handleLock(name)}
 			size={"sm"}
 		>
-			Unlock
+			Lock
 		</Button>
 	)
 }
