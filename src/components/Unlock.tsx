@@ -26,9 +26,9 @@ export function Unlock({ id }: { id: string }) {
 	const unlock = useUnlock((state) => state.unlock)
 
 	const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setIsLoading(true)
 		const file = e.target.files?.[0]
 		if (file) {
+			setIsLoading(true)
 			const reader = new FileReader()
 			reader.onload = async () => {
 				const base64 = reader.result?.toString()
@@ -78,7 +78,12 @@ export function Unlock({ id }: { id: string }) {
 			<DialogTrigger asChild>
 				<Button variant="outline">Unlock</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent
+				className="sm:max-w-[425px]"
+				onInteractOutside={(e) => {
+					e.preventDefault()
+				}}
+			>
 				<DialogHeader>
 					<DialogTitle>Unlock fingerprint</DialogTitle>
 					<DialogDescription>

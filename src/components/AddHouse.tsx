@@ -48,22 +48,6 @@ export function AddHouse() {
 		}
 	}
 
-	const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setIsLoading(true)
-		const file = e.target.files?.[0]
-		if (file) {
-			const reader = new FileReader()
-			reader.onload = async () => {
-				const base64 = reader.result?.toString()
-				if (base64) {
-					// setImg(base64)
-					setIsLoading(false)
-				}
-			}
-			reader.readAsDataURL(file)
-		}
-	}
-
 	return (
 		<Dialog
 			open={open}
