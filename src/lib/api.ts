@@ -1,3 +1,5 @@
+import type { House } from "./useHouses"
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
 const isError = (res: Response) => {
@@ -11,11 +13,7 @@ export const api = {
 		const res = await fetch(`${API_URL}/`)
 		const json = await res.json()
 		isError(res)
-		return json.data as {
-			id: number
-			name: string
-			label: string
-		}[]
+		return json.data as House[]
 	},
 
 	find: async (imgBase64: string) => {
@@ -28,34 +26,33 @@ export const api = {
 		isError(res)
 		const json = await res.json()
 		return json.data as {
-			id: number
-			name: string
+			id: string
 			score: number
-			label: string
+			name: string
+			filename: string
 		}
 	},
 
-	register: async (name: string, imgBase64: string) => {
+	register: async (name: string, imgsBase64: string[]) => {
 		const res = await fetch(`${API_URL}/register`, {
 			method: "POST",
 			body: JSON.stringify({
 				name,
-				gender: 1,
-				lr: 1,
-				finger: 1,
-				fingerprint: imgBase64.replace(/^data:image\/\w+;base64,/, ""),
+				fingerprints: imgsBase64.map((i) =>
+					i.replace(/^data:image\/\w+;base64,/, "")
+				),
 			}),
 		})
 		isError(res)
 		const json = await res.json()
-		return json.data as string
+		return json.data as House
 	},
 
-	delete: async (name: string) => {
+	delete: async (id: string) => {
 		const res = await fetch(`${API_URL}/delete`, {
 			method: "POST",
 			body: JSON.stringify({
-				name,
+				id,
 			}),
 		})
 		isError(res)

@@ -17,7 +17,9 @@ import { toast } from "sonner"
 import { api } from "@/lib/api"
 import { useUnlock } from "@/lib/useUnlock"
 
-export function Unlock({ name }: { name: string }) {
+const MIN_SCORE = 0.9875
+
+export function Unlock({ id }: { id: string }) {
 	const [img, setImg] = useState<string>()
 	const [isLoading, setIsLoading] = useState(false)
 	const [open, setOpen] = useState(false)
@@ -39,20 +41,20 @@ export function Unlock({ name }: { name: string }) {
 		}
 	}
 
-	const handleUnlock = async (name: string) => {
+	const handleUnlock = async (id: string) => {
 		try {
 			if (img) {
 				setIsLoading(true)
 				const result = await api.find(img)
 				setIsLoading(false)
 				console.log("result", result)
-				if (result.score > 0.9 && result.name === name) {
-					unlock(name)
-					toast("✅ User has been unlocked", {
-						description: "User has been unlocked successfully",
+				if (result.score > MIN_SCORE && result.id === id) {
+					unlock(id)
+					toast("✅ House has been unlocked", {
+						description: "House has been unlocked successfully",
 					})
 				} else {
-					toast("❌ Failed to unlock user", {
+					toast("❌ Failed to unlock house", {
 						description: "Wrong fingerprint",
 					})
 				}
@@ -60,7 +62,7 @@ export function Unlock({ name }: { name: string }) {
 			}
 		} catch (error) {
 			setIsLoading(false)
-			toast("❌ Failed to unlock user", {
+			toast("❌ Failed to unlock house", {
 				description: "Wrong fingerprint",
 			})
 		}
@@ -96,7 +98,7 @@ export function Unlock({ name }: { name: string }) {
 						type="submit"
 						disabled={!img || isLoading}
 						className="flex items-center gap-x-2"
-						onClick={() => handleUnlock(name)}
+						onClick={() => handleUnlock(id)}
 					>
 						Unlock
 						{isLoading && <LoadingSpin></LoadingSpin>}

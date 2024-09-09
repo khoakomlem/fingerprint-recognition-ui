@@ -11,24 +11,22 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import dynamic from "next/dynamic"
-import { AddUser } from "@/components/AddUser"
 import { ConfirmAlertWrapper } from "@/components/ConfirmAlert"
 import { Unlock } from "@/components/Unlock"
 import { useEffect, useState } from "react"
 import { api } from "@/lib/api"
 import { useUnlock } from "@/lib/useUnlock"
 import { Lock } from "@/components/Lock"
-import { useUsers } from "@/lib/useUsers"
 import { toast } from "sonner"
+import { type House, useHouses } from "@/lib/useHouses"
+import { AddHouse } from "@/components/AddHouse"
 
 function Component() {
-	const users = useUsers((state) => state.users)
-	const setUsers = useUsers((state) => state.setUsers)
+	const houses = useHouses<House[]>((state) => state.houses)
+	const setHouses = useHouses((state) => state.setHouses)
 
 	useEffect(() => {
-		api.list().then((users) => {
-			setUsers(users.map((u) => u.name))
-		})
+		api.list().then(setHouses)
 	}, [])
 
 	return (
@@ -43,8 +41,8 @@ function Component() {
 			<main className="flex-1 py-8 px-6">
 				<div className="container mx-auto">
 					<div className="mb-6 flex justify-between">
-						<h1 className="text-2xl font-bold">Users</h1>
-						<AddUser></AddUser>
+						<h1 className="text-2xl font-bold">House</h1>
+						<AddHouse></AddHouse>
 					</div>
 					<Card>
 						<CardContent className="p-4">
@@ -59,8 +57,8 @@ function Component() {
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{users.map((user, i) => (
-										<UserRow key={i} name={user}></UserRow>
+									{houses.map((house, i) => (
+										<HouseRow key={i} house={house}></HouseRow>
 									))}
 								</TableBody>
 							</Table>
@@ -72,37 +70,41 @@ function Component() {
 	)
 }
 
-function UserRow({ name }: { name: string }) {
-	const isLocked = useUnlock((state) => !state.unlockMap[name])
-	const remove = useUsers((state) => state.remove)
+function HouseRow({ house }: { house: House }) {
+	const isLocked = useUnlock((state) => !state.unlockMap[house.id])
+	const remove = useHouses((state) => state.remove)
 
-	const handleDelete = async (name: string) => {
+	const handleDelete = async (id: string) => {
 		try {
-			await api.delete(name)
-			remove(name)
-			toast("✅ User has been deleted", {
-				description: "User has been deleted successfully",
+			await api.delete(id)
+			remove(house)
+			toast("✅ House has been removed", {
+				description: "House has been removed successfully",
 			})
 		} catch (error) {
-			toast("❌ Failed to delete user", {
-				description: "Failed to delete user",
+			toast("❌ Failed to remove house", {
+				description: "Failed to remove house",
 			})
 		}
 	}
 
 	return (
 		<TableRow>
-			<TableCell className="font-medium">{name}</TableCell>
+			<TableCell className="font-medium">{house.name}</TableCell>
 			<TableCell>
 				<Badge variant={isLocked ? "destructive" : "secondary"}>
 					{isLocked ? "Locked" : "Unlocked"}
 				</Badge>
 			</TableCell>
 			<TableCell className="flex items-center">
-				{isLocked ? <Unlock name={name}></Unlock> : <Lock name={name}></Lock>}
+				{isLocked ? (
+					<Unlock id={house.id}></Unlock>
+				) : (
+					<Lock id={house.id}></Lock>
+				)}
 				<ConfirmAlertWrapper
 					onConfirm={() => {
-						handleDelete(name)
+						handleDelete(house.id)
 					}}
 				>
 					<Button variant="destructive" size="sm" className="ml-2">
