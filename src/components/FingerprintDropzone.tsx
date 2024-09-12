@@ -14,13 +14,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { X } from "lucide-react"
 import { blobToBase64 } from "@/lib/utils"
+import { api } from "@/lib/api"
+import { House } from "@/lib/useHouses"
 
 export function FingerprintDropzone({
+	house,
 	imgs: images,
 	setImgs: setImages,
 }: {
+	house?: House
 	imgs: string[]
 	setImgs: React.Dispatch<React.SetStateAction<string[]>>
+	isEditing?: boolean
 }) {
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -86,10 +91,12 @@ export function FingerprintDropzone({
 										variant="destructive"
 										size="icon"
 										className="absolute top-1 right-1 z-10 p-0 w-4 h-4"
-										onClick={() => removeImage(index)}
+										onClick={() => {
+											removeImage(index)
+										}}
 										aria-label={`Remove image ${index + 1}`}
 									>
-										<X className="h-4 w-4" />
+										<X className="h-3 w-3" />
 									</Button>
 									<CardContent className="flex aspect-square items-center justify-center p-1">
 										<Image
