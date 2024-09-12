@@ -52,6 +52,10 @@ export function AddHouse() {
 		<Dialog
 			open={open}
 			onOpenChange={(o) => {
+				if (o) {
+					setName("Happy house " + Math.floor(Math.random() * 100000))
+					setImgs([])
+				}
 				setOpen(o)
 			}}
 		>
