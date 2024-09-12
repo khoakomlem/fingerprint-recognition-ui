@@ -22,6 +22,7 @@ import { type House, useHouses } from "@/lib/useHouses"
 import { AddHouse } from "@/components/AddHouse"
 import { SelectModel } from "@/components/SelectModel"
 import { EditHouse } from "@/components/EditHouse"
+import { SelectFilter } from "@/components/SelectFilter"
 
 function Component() {
 	const houses = useHouses<House[]>((state) => state.houses)
@@ -45,6 +46,7 @@ function Component() {
 					<div className="mb-6 flex justify-between">
 						<h1 className="text-2xl font-bold">House</h1>
 						<div className="flex gap-x-2">
+							<SelectFilter></SelectFilter>
 							<SelectModel></SelectModel>
 							<AddHouse></AddHouse>
 						</div>

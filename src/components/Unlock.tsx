@@ -8,7 +8,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { InputFile } from "./InputFile"
 import { useState } from "react"
@@ -16,8 +15,6 @@ import { LoadingSpin } from "./icons/LoadingSpin"
 import { toast } from "sonner"
 import { api } from "@/lib/api"
 import { useUnlock } from "@/lib/useUnlock"
-import { useManagedState } from "@/lib/useManagedState"
-import { MODELS } from "./SelectModel"
 
 const MIN_SCORE = 0.94
 
@@ -27,6 +24,7 @@ export function Unlock({ id }: { id: string }) {
 	const [open, setOpen] = useState(false)
 	const unlock = useUnlock((state) => state.unlock)
 	const modelname = useUnlock((state) => state.modelname)
+	const filtername = useUnlock((state) => state.filtername)
 
 	const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0]
@@ -48,7 +46,10 @@ export function Unlock({ id }: { id: string }) {
 		try {
 			if (img) {
 				setIsLoading(true)
-				const result = await api.find(img, modelname)
+				const result = await api.find(img, {
+					modelname: modelname,
+					filtername: filtername,
+				})
 				setIsLoading(false)
 				console.log("result", result)
 				if (result.score > MIN_SCORE && result.id === id) {
