@@ -70,7 +70,8 @@ export function EditHouse({ house }: { house: House }) {
 		} catch (error) {
 			setIsLoading(false)
 			toast("❌ Failed to edit house", {
-				description: "Failed to edit house",
+				// @ts-ignore
+				description: error.message,
 			})
 		} finally {
 			setOpen(false)

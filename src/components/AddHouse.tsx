@@ -17,6 +17,7 @@ import { toast } from "sonner"
 import { LoadingSpin } from "./icons/LoadingSpin"
 import { useHouses } from "@/lib/useHouses"
 import { FingerprintDropzone } from "./FingerprintDropzone"
+import { useUnlock } from "@/lib/useUnlock"
 
 export function AddHouse() {
 	const [imgs, setImgs] = useState<string[]>([])
@@ -26,12 +27,17 @@ export function AddHouse() {
 	const [isLoading, setIsLoading] = useState(false)
 	const add = useHouses((state) => state.add)
 	const [open, setOpen] = useState(false)
+	const modelname = useUnlock((state) => state.modelname)
+	const filtername = useUnlock((state) => state.filtername)
 
 	const handleAdd = async () => {
 		try {
 			if (imgs && name) {
 				setIsLoading(true)
-				const house = await api.register(name, imgs)
+				const house = await api.register(name, imgs, {
+					modelname: modelname,
+					filtername: filtername,
+				})
 				add(house)
 				setIsLoading(false)
 				toast("✅ House has been added", {
@@ -41,7 +47,8 @@ export function AddHouse() {
 		} catch (error) {
 			setIsLoading(false)
 			toast("❌ Failed to add house", {
-				description: "Failed to add house",
+				// @ts-ignore
+				description: error.message,
 			})
 		} finally {
 			setOpen(false)

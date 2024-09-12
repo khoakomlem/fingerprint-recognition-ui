@@ -8,6 +8,11 @@ const isError = (res: Response) => {
 	}
 }
 
+type ModelOptions = {
+	modelname: string
+	filtername: string
+}
+
 export const api = {
 	list: async () => {
 		const res = await fetch(`${API_URL}/`)
@@ -16,15 +21,16 @@ export const api = {
 		return json.data as House[]
 	},
 
-	find: async (imgBase64: string, modelname: string) => {
-		if (!modelname) {
+	find: async (imgBase64: string, opts: ModelOptions) => {
+		if (!opts.modelname) {
 			throw new Error("Model name is required")
 		}
 		const res = await fetch(`${API_URL}/find`, {
 			method: "POST",
 			body: JSON.stringify({
 				fingerprint: imgBase64.replace(/^data:image\/\w+;base64,/, ""),
-				model: modelname,
+				model: opts.modelname,
+				filter: opts.filtername,
 			}),
 		})
 		isError(res)
@@ -37,7 +43,7 @@ export const api = {
 		}
 	},
 
-	register: async (name: string, imgsBase64: string[]) => {
+	register: async (name: string, imgsBase64: string[], opts: ModelOptions) => {
 		const res = await fetch(`${API_URL}/register`, {
 			method: "POST",
 			body: JSON.stringify({
@@ -45,6 +51,8 @@ export const api = {
 				fingerprints: imgsBase64.map((i) =>
 					i.replace(/^data:image\/\w+;base64,/, "")
 				),
+				model: opts.modelname,
+				filter: opts.filtername,
 			}),
 		})
 		isError(res)
@@ -87,5 +95,12 @@ export const api = {
 		isError(res)
 		const json = await res.json()
 		return json.data as House
+	},
+
+	get_models: async () => {
+		const res = await fetch(`${API_URL}/models`)
+		const json = await res.json()
+		isError(res)
+		return json.data as string[]
 	},
 }

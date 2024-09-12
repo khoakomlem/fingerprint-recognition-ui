@@ -8,13 +8,21 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { api } from "@/lib/api"
 import { useUnlock } from "@/lib/useUnlock"
-
-export const MODELS = ["gabor15epochs", "nongabor15epochs"]
+import { useEffect, useState } from "react"
 
 export function SelectModel() {
+	const [models, setModels] = useState<string[]>([])
 	const modelname = useUnlock((state) => state.modelname)
 	const selectModel = useUnlock((state) => state.selectModel)
+
+	useEffect(() => {
+		api.get_models().then((models) => {
+			setModels(models)
+			selectModel(models[0])
+		})
+	}, [])
 
 	return (
 		<DropdownMenu>
@@ -25,7 +33,7 @@ export function SelectModel() {
 				<DropdownMenuLabel>Select model</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuRadioGroup value={modelname} onValueChange={selectModel}>
-					{MODELS.map((model) => (
+					{models.map((model) => (
 						<DropdownMenuRadioItem key={model} value={model}>
 							{model}
 						</DropdownMenuRadioItem>
