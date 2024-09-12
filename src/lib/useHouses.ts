@@ -4,7 +4,7 @@ import { immer } from "zustand/middleware/immer"
 export type House = {
 	id: string
 	name: string
-	fingerprints: string[]
+	fingerprint_ids: string[]
 }
 
 type State = {
