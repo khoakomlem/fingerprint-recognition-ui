@@ -20,6 +20,8 @@ import { Lock } from "@/components/Lock"
 import { toast } from "sonner"
 import { type House, useHouses } from "@/lib/useHouses"
 import { AddHouse } from "@/components/AddHouse"
+import { SelectModel } from "@/components/SelectModel"
+import { EditHouse } from "@/components/EditHouse"
 
 function Component() {
 	const houses = useHouses<House[]>((state) => state.houses)
@@ -42,7 +44,10 @@ function Component() {
 				<div className="container mx-auto">
 					<div className="mb-6 flex justify-between">
 						<h1 className="text-2xl font-bold">House</h1>
-						<AddHouse></AddHouse>
+						<div className="flex gap-x-2">
+							<SelectModel></SelectModel>
+							<AddHouse></AddHouse>
+						</div>
 					</div>
 					<Card>
 						<CardContent className="p-4">
@@ -96,18 +101,19 @@ function HouseRow({ house }: { house: House }) {
 					{isLocked ? "Locked" : "Unlocked"}
 				</Badge>
 			</TableCell>
-			<TableCell className="flex items-center">
+			<TableCell className="flex items-center gap-x-2">
 				{isLocked ? (
 					<Unlock id={house.id}></Unlock>
 				) : (
 					<Lock id={house.id}></Lock>
 				)}
+				<EditHouse house={house}></EditHouse>
 				<ConfirmAlertWrapper
 					onConfirm={() => {
 						handleDelete(house.id)
 					}}
 				>
-					<Button variant="destructive" size="sm" className="ml-2">
+					<Button variant="destructive" size="sm" className="">
 						Delete
 					</Button>
 				</ConfirmAlertWrapper>
